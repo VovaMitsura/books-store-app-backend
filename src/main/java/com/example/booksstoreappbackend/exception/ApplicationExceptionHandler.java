@@ -43,7 +43,7 @@ public class ApplicationExceptionHandler {
     return new ErrorResponse(LocalDateTime.now(),
             HttpStatus.BAD_REQUEST.toString(),
             exception.getErrorCode(),
-            exception.getErrorCode());
+            exception.getMessage());
   }
 
   @ResponseBody
