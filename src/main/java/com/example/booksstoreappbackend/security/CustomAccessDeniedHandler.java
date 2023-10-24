@@ -5,12 +5,14 @@ import com.example.booksstoreappbackend.exception.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 
 /**
@@ -34,11 +36,14 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                      HttpServletResponse response,
                      AccessDeniedException accessDeniedException)
           throws IOException {
-    var errorResponse = new ErrorResponse(ApplicationExceptionHandler.NO_PERMISSION,
+    var errorResponse = new ErrorResponse(LocalDateTime.now(), HttpStatus.FORBIDDEN.toString(), ApplicationExceptionHandler.NO_PERMISSION,
             "Access Denied: have not the required role to access this resource.");
 
+    var mapper = new ObjectMapper();
+    mapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-    response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
+    response.getWriter().write(mapper.writeValueAsString(errorResponse));
     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
   }
 }

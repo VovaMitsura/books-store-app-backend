@@ -5,6 +5,7 @@ import com.example.booksstoreappbackend.controller.dto.AuthenticationRequest;
 import com.example.booksstoreappbackend.controller.dto.AuthenticationResponse;
 import com.example.booksstoreappbackend.controller.dto.RegisterRequest;
 import com.example.booksstoreappbackend.service.AuthenticationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class AuthenticationController {
    */
   @PostMapping("/register")
   public ResponseEntity<Map<String, Object>> register(
-          @RequestBody RegisterRequest registerRequest) {
+          @RequestBody @Valid RegisterRequest registerRequest) {
     var result = authenticationService.register(registerRequest);
     var response = new HashMap<String, Object>();
     response.put("message", result);
@@ -45,7 +46,7 @@ public class AuthenticationController {
    */
   @GetMapping("/confirmation")
   public ResponseEntity<AuthenticationResponse> activation(
-          @RequestParam(name = "token") String token) {
+          @RequestParam(name = "token") @Valid String token) {
     return ResponseEntity.ok(authenticationService.activate(token));
   }
 
@@ -57,7 +58,7 @@ public class AuthenticationController {
    */
   @PostMapping("/authenticate")
   public ResponseEntity<AuthenticationResponse> authenticate(
-          @RequestBody AuthenticationRequest authenticationRequest) {
+          @RequestBody @Valid AuthenticationRequest authenticationRequest) {
     return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
   }
 }

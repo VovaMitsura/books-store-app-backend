@@ -29,3 +29,8 @@ jwt:
   secret: ${JWT_SECRET}
 link:
   confirmation: ${CONFIRMATION_LINK}
+aws:
+  region: "eu-north-1"
+  s3:
+    buckets:
+      customer: "books-store-bucket"

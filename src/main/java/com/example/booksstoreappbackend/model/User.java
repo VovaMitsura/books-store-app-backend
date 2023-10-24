@@ -38,6 +38,9 @@ public class User implements UserDetails {
   @Enumerated(EnumType.STRING)
   private Role role;
 
+  @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
+  private List<Book> books;
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return List.of(new SimpleGrantedAuthority(role.toString()));
