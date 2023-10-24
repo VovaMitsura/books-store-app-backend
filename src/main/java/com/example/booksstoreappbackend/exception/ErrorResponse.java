@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * REST error response. Contains error code and errorMessage.
  */
@@ -14,7 +16,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ErrorResponse {
 
-  private String errorCode;
-  private String errorMessage;
+  private LocalDateTime timestamp;
+  private String status;
+  private String description;
+  private String details;
 
 }

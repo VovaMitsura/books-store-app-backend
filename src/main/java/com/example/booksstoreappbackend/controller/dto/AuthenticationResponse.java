@@ -1,5 +1,6 @@
 package com.example.booksstoreappbackend.controller.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 /**
@@ -8,5 +9,5 @@ import lombok.Builder;
  * @param token - jwt token.
  */
 @Builder
-public record AuthenticationResponse(String token) {
+public record AuthenticationResponse(@NotBlank(message = "token cannot be blank") String token) {
 }

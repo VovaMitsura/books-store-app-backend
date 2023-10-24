@@ -148,6 +148,7 @@ public class AuthenticationService {
 
     var user = userRepository.findByEmail(authenticationRequest.email()).orElseThrow();
     var claims = new HashMap<String, Object>();
+    claims.put("id", user.getId());
     claims.put("role", user.getRole());
     var jwt = jwtService.generateToken(claims, user);
 
