@@ -28,7 +28,6 @@ public class ApplicationExceptionHandler {
   public static final String PAYMENT_EXCEPTION = "payment_exception";
   public static final String QUANTITY_CONFLICT = "quantity_conflict";
 
-
   @ResponseBody
   @ResponseStatus(value = HttpStatus.CONFLICT)
   @ExceptionHandler(EntityConflictException.class)

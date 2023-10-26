@@ -117,7 +117,6 @@ public class UserService {
     bookRepository.delete(book);
   }
 
-
   private void saveImageToS3(BookDto bookDto, User seller, Book book) {
     if (bookDto.image() != null) {
       try {
