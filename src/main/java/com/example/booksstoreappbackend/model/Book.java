@@ -24,5 +24,14 @@ public class Book {
   @ManyToOne
   @JoinColumn(name = "seller_id", nullable = false)
   private User seller;
+  @ManyToOne
+  @JoinColumn(name = "genre_id", nullable = false)
+  private Genre genre;
+  @ManyToOne
+  @JoinColumn(name = "bonus_id")
+  private Bonus bonus;
+  @ManyToOne
+  @JoinColumn(name = "discount_id")
+  private Discount discount;
 
 }

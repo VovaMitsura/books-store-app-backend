@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import com.example.booksstoreappbackend.model.Order;
 import com.example.booksstoreappbackend.model.User;
+import com.stripe.model.Charge;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -76,6 +78,20 @@ public class MailingService {
     Map<String, Object> content = new HashMap<>(payloads);
     content.put("customer", user);
 
+    send(emailToAddress, template, content);
+  }
+
+  public void sendForPay(User user, Charge charge, Order order, String emailToAddress, String template, Map<String, Object> payloads)
+          throws MessagingException, IOException, TemplateException {
+    Map<String, Object> content = new HashMap<>(payloads);
+    content.put("customer", user);
+    content.put("charge", charge);
+    content.put("order", order);
+
+    send(emailToAddress, template, content);
+  }
+
+  private void send(String emailToAddress, String template, Map<String, Object> content) throws MessagingException, IOException, TemplateException {
     MimeMessage mailMessage = this.mailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true);
     helper.setTo(emailToAddress);

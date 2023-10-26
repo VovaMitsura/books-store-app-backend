@@ -1,6 +1,7 @@
 package com.example.booksstoreappbackend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,6 +41,10 @@ public class User implements UserDetails {
 
   @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
   private List<Book> books;
+
+  @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+  @JsonIgnore
+  private List<Order> orders;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
