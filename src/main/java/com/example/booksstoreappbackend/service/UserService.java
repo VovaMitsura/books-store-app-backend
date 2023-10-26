@@ -93,6 +93,7 @@ public class UserService {
     book.setAuthor(bookDto.author());
     book.setPrice(bookDto.price());
     book.setDescription(bookDto.description());
+    book.setGenre(bookMapper.toModel(bookDto, seller).getGenre());
     book.setQuantity(bookDto.quantity());
 
     saveImageToS3(bookDto, seller, book);
@@ -115,7 +116,6 @@ public class UserService {
     s3Service.deleteObject(book.getUrl());
     bookRepository.delete(book);
   }
-
 
 
   private void saveImageToS3(BookDto bookDto, User seller, Book book) {
