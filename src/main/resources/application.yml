@@ -34,3 +34,6 @@ aws:
   s3:
     buckets:
       customer: "books-store-bucket"
+stripe:
+  secret:
+    key: ${STRIPE.SECRET}
