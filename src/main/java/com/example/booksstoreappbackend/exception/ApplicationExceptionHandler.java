@@ -25,6 +25,9 @@ public class ApplicationExceptionHandler {
   public static final String TOKEN_EXCEPTION = "token_exception";
   public static final String NO_PERMISSION = "no_permission";
   public static final String BAD_REQUEST = "bad_request";
+  public static final String PAYMENT_EXCEPTION = "payment_exception";
+  public static final String QUANTITY_CONFLICT = "quantity_conflict";
+
 
   @ResponseBody
   @ResponseStatus(value = HttpStatus.CONFLICT)
@@ -52,6 +55,16 @@ public class ApplicationExceptionHandler {
   public ErrorResponse handleNotFoundException(NotFoundException exception) {
     return new ErrorResponse(LocalDateTime.now(),
             HttpStatus.NOT_FOUND.toString(),
+            exception.getErrorCode(),
+            exception.getMessage());
+  }
+
+  @ResponseBody
+  @ResponseStatus(value = HttpStatus.PAYMENT_REQUIRED)
+  @ExceptionHandler(PaymentException.class)
+  public ErrorResponse handlePaymentException(PaymentException exception) {
+    return new ErrorResponse(LocalDateTime.now(),
+            HttpStatus.PAYMENT_REQUIRED.toString(),
             exception.getErrorCode(),
             exception.getMessage());
   }
