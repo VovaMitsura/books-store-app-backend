@@ -2,6 +2,7 @@ package com.example.booksstoreappbackend.controller.dto.mapper;
 
 import com.example.booksstoreappbackend.controller.dto.BookDto;
 import com.example.booksstoreappbackend.controller.dto.BookResponseDto;
+import com.example.booksstoreappbackend.controller.dto.CommentResponseDto;
 import com.example.booksstoreappbackend.controller.dto.SellerDTO;
 import com.example.booksstoreappbackend.model.Book;
 import com.example.booksstoreappbackend.model.User;
@@ -38,7 +39,13 @@ public class BookMapper {
             book.getDescription(),
             book.getQuantity(),
             new SellerDTO(seller.getId(), seller.getFirstName(), seller.getLastName(), seller.getEmail()),
+            book.getComments().stream().map(comment -> new CommentResponseDto(
+                    comment.getId(),
+                    comment.getMessage(),
+                    comment.getDate(),
+                    comment.getCommenter().getEmail())).toList(),
             book.getUrl(),
+            book.getLikedByUsers().contains(seller),
             image);
   }
 }
