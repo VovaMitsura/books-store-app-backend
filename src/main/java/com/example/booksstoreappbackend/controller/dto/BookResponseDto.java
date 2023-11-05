@@ -1,5 +1,6 @@
 package com.example.booksstoreappbackend.controller.dto;
 
+import java.util.List;
 import java.util.UUID;
 
 public record BookResponseDto(UUID id,
@@ -10,6 +11,8 @@ public record BookResponseDto(UUID id,
                               String description,
                               Integer quantity,
                               SellerDTO seller,
+                              List<CommentResponseDto> comments,
                               String imageUrl,
+                              Boolean isLiked,
                               byte[] image) {
 }
