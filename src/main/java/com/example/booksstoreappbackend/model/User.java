@@ -52,6 +52,8 @@ public class User implements UserDetails {
   @Builder.Default
   private Set<Book> likedBooks = new HashSet<>();
 
+  private Double bonusesAmounts;
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return List.of(new SimpleGrantedAuthority(role.toString()));

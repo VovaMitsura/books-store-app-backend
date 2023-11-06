@@ -43,7 +43,7 @@ public class UserService {
                     String.format("User with email %s not found", userEmail)));
   }
 
-  private User getUserById(UUID userId) {
+  public User getUserById(UUID userId) {
     return userRepository.findById(userId).orElseThrow(() ->
             new NotFoundException(ApplicationExceptionHandler.NOT_FOUND,
                     String.format("User with id %s not found", userId)));

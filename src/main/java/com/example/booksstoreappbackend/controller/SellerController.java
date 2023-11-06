@@ -1,6 +1,8 @@
 package com.example.booksstoreappbackend.controller;
 
 import com.example.booksstoreappbackend.controller.dto.BookDto;
+import com.example.booksstoreappbackend.controller.dto.DiscountDto;
+import com.example.booksstoreappbackend.service.BookService;
 import com.example.booksstoreappbackend.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.UUID;
 public class SellerController {
 
   private final UserService userService;
+  private final BookService bookService;
 
   @PostMapping(value = "/{sellerId}/books", consumes = {"multipart/form-data"})
   public ResponseEntity<?> addBook(@PathVariable UUID sellerId, @ModelAttribute @Valid BookDto book) {
@@ -31,9 +34,22 @@ public class SellerController {
   }
 
   @DeleteMapping(value = "/{sellerId}/books/{bookId}")
-    public ResponseEntity<?> deleteBook(@PathVariable UUID sellerId, @PathVariable UUID bookId) {
-        userService.deleteSellerBook(sellerId, bookId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+  public ResponseEntity<?> deleteBook(@PathVariable UUID sellerId, @PathVariable UUID bookId) {
+    userService.deleteSellerBook(sellerId, bookId);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'SELLER')")
+  @PostMapping(value = "/{sellerId}/books/{bookId}/discounts")
+  public ResponseEntity<?> addDiscount(@PathVariable UUID sellerId, @PathVariable UUID bookId,
+                                       @RequestBody DiscountDto discountRequest) {
+    return new ResponseEntity<>(bookService.addDiscount(sellerId, bookId, discountRequest), HttpStatus.CREATED);
+  }
+
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'SELLER')")
+  @DeleteMapping(value = "/{sellerId}/books/{bookId}/discounts")
+  public ResponseEntity<?> deleteDiscount(@PathVariable UUID sellerId, @PathVariable UUID bookId) {
+    bookService.deleteDiscount(sellerId, bookId);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 }
