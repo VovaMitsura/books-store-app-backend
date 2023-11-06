@@ -36,7 +36,7 @@ public class OrderDetails {
   public double getTotalPrice() {
     if (book != null) {
       return book.getDiscount() == null ? book.getPrice() * quantity :
-              book.getPrice() * quantity - book.getPrice() * quantity * book.getDiscount().getPercentage();
+              book.getPrice() * quantity - (book.getPrice() * quantity * book.getDiscount().getPercentage() / 100);
     }
     return 0;
   }
