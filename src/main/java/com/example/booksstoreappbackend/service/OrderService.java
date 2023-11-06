@@ -11,6 +11,7 @@ import com.example.booksstoreappbackend.exception.NotFoundException;
 import com.example.booksstoreappbackend.model.*;
 import com.example.booksstoreappbackend.repository.OrderDetailsRepository;
 import com.example.booksstoreappbackend.repository.OrderRepository;
+import com.example.booksstoreappbackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ public class OrderService {
   public static final String MAIL_TEMPLATE_ORDER_IS_NOT_PAYED = "order_is_not_payed";
 
   private final OrderRepository orderRepository;
+  private final UserRepository userRepository;
   private final BookService bookService;
   private final OrderDetailsRepository orderDetailsRepository;
   private final OrderMapper orderMapper;
@@ -96,7 +98,26 @@ public class OrderService {
               order.getCustomer().getEmail(), order, paymentStatus));
     }
 
+    addBonusesToUser(order.getCustomer(), order);
+
     return paymentStatus;
+  }
+
+  private void addBonusesToUser(User customer, Order order) {
+    List<OrderDetails> orderDetails = order.getOrderDetails();
+
+    var totalAmount = 0.0;
+
+    for (OrderDetails details : orderDetails) {
+      var book = details.getBook();
+      var bonusAmount = book.getBonus().getAmount();
+
+      totalAmount += bonusAmount * details.getQuantity();
+    }
+
+    customer.setBonusesAmounts(customer.getBonusesAmounts() == null ?
+            totalAmount : customer.getBonusesAmounts() + totalAmount);
+    userRepository.save(customer);
   }
 
   private void ordersAmountNotGreaterThanProducts(Order order) {

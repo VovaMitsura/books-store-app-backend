@@ -1,9 +1,6 @@
 package com.example.booksstoreappbackend.controller.dto.mapper;
 
-import com.example.booksstoreappbackend.controller.dto.BookDto;
-import com.example.booksstoreappbackend.controller.dto.BookResponseDto;
-import com.example.booksstoreappbackend.controller.dto.CommentResponseDto;
-import com.example.booksstoreappbackend.controller.dto.SellerDTO;
+import com.example.booksstoreappbackend.controller.dto.*;
 import com.example.booksstoreappbackend.model.Book;
 import com.example.booksstoreappbackend.model.User;
 import com.example.booksstoreappbackend.service.GenreService;
@@ -38,6 +35,8 @@ public class BookMapper {
             book.getGenre().getName(),
             book.getDescription(),
             book.getQuantity(),
+            book.getDiscount() != null ? new DiscountDto(book.getDiscount().getName(), book.getDiscount().getPercentage()) : null,
+            book.getBonus() != null ? new BonusResponseDto(book.getBonus().getName(), book.getBonus().getAmount()) : null,
             new SellerDTO(seller.getId(), seller.getFirstName(), seller.getLastName(), seller.getEmail()),
             book.getComments().stream().map(comment -> new CommentResponseDto(
                     comment.getId(),

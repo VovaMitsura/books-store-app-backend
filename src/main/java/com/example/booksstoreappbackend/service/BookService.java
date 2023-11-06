@@ -2,14 +2,18 @@ package com.example.booksstoreappbackend.service;
 
 import com.example.booksstoreappbackend.controller.dto.BookDto;
 import com.example.booksstoreappbackend.controller.dto.CommentRequest;
+import com.example.booksstoreappbackend.controller.dto.DiscountDto;
 import com.example.booksstoreappbackend.controller.dto.mapper.BookMapper;
 import com.example.booksstoreappbackend.controller.dto.BookResponseDto;
 import com.example.booksstoreappbackend.exception.ApplicationExceptionHandler;
 import com.example.booksstoreappbackend.exception.NotFoundException;
 import com.example.booksstoreappbackend.model.Book;
 import com.example.booksstoreappbackend.model.Comment;
+import com.example.booksstoreappbackend.model.Discount;
+import com.example.booksstoreappbackend.repository.BonusRepository;
 import com.example.booksstoreappbackend.repository.BookRepository;
 import com.example.booksstoreappbackend.repository.CommentRepository;
+import com.example.booksstoreappbackend.repository.DiscountRepository;
 import com.example.booksstoreappbackend.s3.S3Service;
 import com.example.booksstoreappbackend.security.util.UserPrincipalUtil;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +38,8 @@ public class BookService {
   private final S3Service s3Service;
   private final BookMapper bookMapper;
   private final CommentRepository commentRepository;
+  private final DiscountRepository discountRepository;
+  private final BonusRepository bonusRepository;
 
   public BookResponseDto getBookById(UUID bookId) {
     var book = bookRepository.findById(bookId).orElseThrow(() ->
@@ -109,5 +115,71 @@ public class BookService {
     }
 
     commentRepository.delete(comment);
+  }
+
+  public BookResponseDto addDiscount(UUID sellerId, UUID bookId, DiscountDto discountRequest) {
+    var book = getSellerBook(sellerId, bookId);
+
+    var optDiscount = discountRepository.findByName(discountRequest.name());
+    var discount = new Discount();
+
+    if (optDiscount.isPresent()) {
+      discount = optDiscount.get();
+    } else {
+      discount.setName(discountRequest.name());
+      discount.setPercentage(discountRequest.percentage());
+      discount = discountRepository.save(discount);
+    }
+
+    book.setDiscount(discount);
+    book = bookRepository.save(book);
+
+    return bookMapper.toResponseDto(book, null);
+  }
+
+  public void deleteDiscount(UUID sellerId, UUID bookId) {
+    var book = getSellerBook(sellerId, bookId);
+    book.setDiscount(null);
+    bookRepository.save(book);
+  }
+
+  private Book getSellerBook(UUID sellerId, UUID bookId) {
+    var seller = userService.getUserById(sellerId);
+    var book = bookRepository.findById(bookId).orElseThrow(() ->
+            new NotFoundException(ApplicationExceptionHandler.NOT_FOUND,
+                    String.format("Book with id %s not found", bookId)));
+
+    if (!book.getSeller().equals(seller)) {
+      throw new NotFoundException(ApplicationExceptionHandler.NOT_FOUND,
+              String.format("Book with id %s not found", bookId));
+    }
+
+    return book;
+  }
+
+  public BookResponseDto addBonusToBook(UUID bookId, String bonusName) {
+    var book = findByIdWithoutImage(bookId);
+    var bonus = bonusRepository.findByName(bonusName).orElseThrow(() ->
+            new NotFoundException(ApplicationExceptionHandler.NOT_FOUND,
+                    String.format("Bonus with name %s not found", bonusName)));
+
+    book.setBonus(bonus);
+    book = bookRepository.save(book);
+    return bookMapper.toResponseDto(book, null);
+  }
+
+  public void deleteBonusFromBook(UUID bookId, String bonusName) {
+    var book = findByIdWithoutImage(bookId);
+    var bonus = bonusRepository.findByName(bonusName).orElseThrow(() ->
+            new NotFoundException(ApplicationExceptionHandler.NOT_FOUND,
+                    String.format("Bonus with name %s not found", bonusName)));
+
+    if (!Objects.equals(book.getBonus().getName(), bonus.getName())) {
+      throw new NotFoundException(ApplicationExceptionHandler.NOT_FOUND,
+              String.format("Bonus with name %s not found for book %s", bonusName, book.getTitle()));
+    }
+
+    book.setBonus(null);
+    bookRepository.save(book);
   }
 }
